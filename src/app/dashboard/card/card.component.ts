@@ -1,4 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+const cudOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' })};
 
 @Component({
   selector: 'app-card',
@@ -8,13 +10,23 @@ import { Component, OnInit, Input } from '@angular/core';
 export class CardComponent implements OnInit {
 
   @Input() card;
-  constructor() { }
+  color: string;
+  constructor(private httpClient: HttpClient) {
+      this.color = ""
+   }
 
   ngOnInit() {
   }
 
-  onLike(card: any){
-    // TODO: incrementar o like, salvar via rest
+  onLike(){
+    this.card.likes++;
+    if(this.card.likes > 5){
+      this.color = "primary"
+    }
+    if(this.card.likes > 10){
+      this.color = "warn"
+    }
+    return this.httpClient.put(`/api/skills/${this.card.id}`,this.card, cudOptions);
   }
 
   onShare(card: any){
